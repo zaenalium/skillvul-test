@@ -4,6 +4,11 @@ This repository created in order to fulfill the technical test as a Mentor AI in
 
 In this case I am using *shiny* from posit.co (formerly Rstudio), shiny is web application that provided for R. However, lately they support the package for Python. I am using this because the ease of use as well as they provide free deployment for the web application.
 
+## Accessing the web application
+
+please visit this link to access the web application : https://74d6-103-47-132-15.ngrok-free.app
+
+
 ## How to run this code.
 
 in order to run this code make sure you are using python version 3.9.16 or latest. Then install the package requirements by typing this command.
