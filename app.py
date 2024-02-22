@@ -8,6 +8,17 @@ import pandas as pd
 
 df = pd.read_csv('purchase_history_modify.csv')
 df_product_detail  = pd.read_csv('product_details.csv', sep = ';').dropna(how='all', axis=1)
+df2 = df.merge(df_product_detail, on = 'product_id', how = 'left')
+
+cust = pd.read_csv('customer_interactions.csv')
+
+def human_format(num):
+    num = float('{:.3g}'.format(num))
+    magnitude = 0
+    while abs(num) >= 1000:
+        magnitude += 1
+        num /= 1000.0
+    return '{}{}'.format('{:f}'.format(num).rstrip('0').rstrip('.'), ['', 'K', 'M', 'B', 'T'][magnitude])
 
 app_ui = ui.page_fluid(
     ui.row(
@@ -19,38 +30,36 @@ app_ui = ui.page_fluid(
     ui.row(
     ui.layout_column_wrap(
         ui.value_box(
-            "Number of Transaction",
-            "5 items",
-            showcase=piggy_bank,
+            title = "Number of Transaction",
+            value = ui.output_ui("trans_no"),
+            showcase=item,
             theme="bg-gradient-orange-cyan",
             full_screen=True
         ),
         ui.value_box(
-            "Total of Transaction",
-            "$200",
-            showcase=cart,
+            title = "Total of Transaction Amount",
+            value = ui.output_ui("trans_amt"),
+            showcase=piggy_bank,
             theme="text-green",
-            showcase_layout="top right",
             full_screen=True
         ),
         ui.value_box(
-            "Most Bought Product",
-            "$1 Billion Dollars",
+            title = "Most Bought Product",
+            value = ui.output_ui("prod"),
             showcase=item,
             theme="purple",
-            showcase_layout="top right",
             full_screen=True
         ),
         ui.value_box(
-            "Total Page View",
-            "1000",
+            title = "Total Page View",
+            value = ui.output_ui("view"),
             showcase=piggy_bank,
             theme="bg-gradient-orange-cyan",
             full_screen=True
         ),
         ui.value_box(
-            "Time spent in minutes",
-            "100",
+            title = "Time spent in Minutes",
+            value = ui.output_ui("time"),
             showcase=cart,
             theme="text-green",
             showcase_layout="top right",
@@ -79,5 +88,29 @@ def server(input, output, session):
             rec,  width='100%'
         )
     
+    @render.text()
+    def trans_no():
+        return (df.customer_id == input.id()).sum()
 
+    @render.text()
+    def trans_amt():
+        total_amt = df2[df2.customer_id == input.id()]['price'].sum()
+        return human_format(total_amt)
+    
+    @render.text()
+    def prod():
+        value_cnt = df2[df2.customer_id == input.id()].category.value_counts()
+        value = value_cnt[0]
+        product = value_cnt.index[0]
+        return f"{product} with {value} transactions"
+    
+    @render.text()
+    def view():
+        value_cnt = cust[cust.customer_id == input.id()].page_views.tolist()[0]
+        return value_cnt
+    
+    @render.text()
+    def time():
+        value_cnt = cust[cust.customer_id == input.id()].time_spent.tolist()[0]
+        return value_cnt
 app = App(app_ui, server, debug=True)
