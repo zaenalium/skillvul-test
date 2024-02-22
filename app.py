@@ -1,5 +1,3 @@
-import seaborn as sns
-from palmerpenguins import load_penguins
 from shiny import App, render, ui
 from model_rec import recommendation_eng  
 from icons import piggy_bank, cart, item, eye, clock
@@ -23,7 +21,7 @@ def human_format(num):
 app_ui = ui.page_fluid(
     ui.row(
         ui.column(
-            6, "", ui.input_numeric("id", "User Id", value =  1)),
+            6, "", ui.input_numeric("id", "Customer Id", value =  1)),
         ui.column(
             6, "", ui.input_numeric("n", "Number of recommendation", value =  5))
             ) ,
@@ -33,21 +31,14 @@ app_ui = ui.page_fluid(
             title = "Number of Transaction",
             value = ui.output_ui("trans_no"),
             showcase=item,
-            theme="bg-gradient-orange-cyan",
+            theme="sky-blue",
             full_screen=True
         ),
         ui.value_box(
             title = "Total of Transaction Amount",
             value = ui.output_ui("trans_amt"),
             showcase=piggy_bank,
-            theme="text-green",
-            full_screen=True
-        ),
-        ui.value_box(
-            title = "Most Bought Product",
-            value = ui.output_ui("prod"),
-            showcase=cart,
-            theme="pink",
+            theme="green",
             full_screen=True
         ),
         ui.value_box(
@@ -58,10 +49,17 @@ app_ui = ui.page_fluid(
             full_screen=True
         ),
         ui.value_box(
+            title = "Most Bought Product",
+            value = ui.output_ui("prod"),
+            showcase=cart,
+            theme="pink",
+            full_screen=True
+        ),
+        ui.value_box(
             title = "Time spent in Minutes",
             value = ui.output_ui("time"),
             showcase=clock,
-            theme="text-green",
+            theme="red",
             showcase_layout="top right",
             full_screen=True
            
@@ -84,6 +82,8 @@ def server(input, output, session):
         rec.drop('recommendation score', axis = 1, inplace = True)
         rec['rank of recommendation'] = list(range(1, 6 ,1))
         rec = rec[rec['rank of recommendation'] <= input.n()]
+        rec = rec.rename(columns = {'product_id':'Product Id', 'category': 'Category',
+                                    'price': 'Price', 'ratings': 'Ratings', 'rank of recommendation': 'Rank of Recommendation' })
         return render.DataTable(
             rec,  width='100%'
         )
@@ -113,4 +113,5 @@ def server(input, output, session):
     def time():
         value_cnt = cust[cust.customer_id == input.id()].time_spent.tolist()[0]
         return value_cnt
+    
 app = App(app_ui, server, debug=True)
