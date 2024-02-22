@@ -2,7 +2,7 @@ import seaborn as sns
 from palmerpenguins import load_penguins
 from shiny import App, render, ui
 from model_rec import recommendation_eng  
-from icons import piggy_bank, cart, item
+from icons import piggy_bank, cart, item, eye, clock
 import pandas as pd
 
 
@@ -46,21 +46,21 @@ app_ui = ui.page_fluid(
         ui.value_box(
             title = "Most Bought Product",
             value = ui.output_ui("prod"),
-            showcase=item,
-            theme="purple",
+            showcase=cart,
+            theme="pink",
             full_screen=True
         ),
         ui.value_box(
             title = "Total Page View",
             value = ui.output_ui("view"),
-            showcase=piggy_bank,
+            showcase=eye,
             theme="bg-gradient-orange-cyan",
             full_screen=True
         ),
         ui.value_box(
             title = "Time spent in Minutes",
             value = ui.output_ui("time"),
-            showcase=cart,
+            showcase=clock,
             theme="text-green",
             showcase_layout="top right",
             full_screen=True
