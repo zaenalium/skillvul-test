@@ -6,7 +6,7 @@ In this case I am using *shiny* from posit.co (formerly Rstudio), shiny is web a
 
 ## Accessing the web application
 
-please visit this link to access the web application : https://74d6-103-47-132-15.ngrok-free.app
+please visit this link to access the web application : https://zaenal.shinyapps.io/skilvul-test-3/
 
 
 ## How to run this code.
